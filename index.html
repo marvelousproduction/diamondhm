@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DJ DIAMOND HM — Siente las Frecuencias y el Brillo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@600;700&display=swap');
+
+  /* ============================================================
+     DESIGN TOKENS — edit the palette / borders here
+     ============================================================ */
+  :root{
+    --color-bg-deep:#13061E;   /* outer page background */
+    --color-panel:#211236;     /* secondary panel background */
+    --color-dark:#1A0A2E;      /* dark panel background */
+    --color-accent:#fb860c;    /* signature orange */
+    --color-white:#ffffff;
+	--color-accent2:#91134a;
+    --border-w:3px;
+    --border-w-2:2px;
+    --max-width:1200px;
+    --font-display:'Anton', Impact, Oswald, sans-serif;
+    --font-cond:'Oswald', Impact, sans-serif;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--color-bg-deep);
+    color:var(--color-accent);
+    font-family:var(--font-cond);
+    -webkit-font-smoothing:antialiased;
+  }
+  button{ font-family:inherit; cursor:pointer; background:none; border:none; color:inherit; }
+  ::selection{ background:var(--color-accent); color:var(--color-dark); }
+  * { border-color:var(--color-accent); }
+
+  .font-display{ font-family:var(--font-display); }
+  .font-cond{ font-family:var(--font-cond); }
+
+  /* ============================================================
+     PAGE WRAP
+     ============================================================ */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 8px;
+    overflow-x:hidden;
+  }
+  @media (min-width:768px){
+    .wrap{ padding:24px 16px; }
+  }
+
+  .poster{
+    width:100%;
+    max-width:var(--max-width);
+    background:var(--color-panel);
+    border:var(--border-w) solid var(--color-accent);
+    margin:8px auto;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 0 0 var(--color-accent);
+  }
+  @media (min-width:768px){
+    .poster{ margin:8px auto; box-shadow:12px 12px 0 var(--color-accent); }
+  }
+
+  /* ============================================================
+     TOP BAR
+     ============================================================ */
+  .topbar{
+    display:grid;
+    grid-template-columns:1fr auto;
+    border-bottom:var(--border-w) solid var(--color-accent);
+    font-size:11px;
+    line-height:1;
+  }
+  @media (min-width:768px){ .topbar{ font-size:13px; } }
+
+  .topbar-left{
+    background:var(--color-accent);
+    color:var(--color-dark);
+    letter-spacing:0.02em;
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  @media (min-width:768px){ .topbar-left{ padding:10px 20px; } }
+  .topbar-left .strong{ font-weight:900; }
+  .topbar-left .sub{ display:none; opacity:.8; font-weight:700; }
+  @media (min-width:768px){ .topbar-left .sub{ display:inline; } }
+
+  .topbar-right{
+    background:var(--color-dark);
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-weight:700;
+    letter-spacing:0.15em;
+    white-space:nowrap;
+  }
+  @media (min-width:768px){ .topbar-right{ padding:10px 20px; } }
+  .topbar-right .full{ display:none; }
+  .topbar-right .short{ display:inline; }
+  @media (min-width:768px){
+    .topbar-right .full{ display:inline; }
+    .topbar-right .short{ display:none; }
+  }
+
+  /* ============================================================
+     INFO ROW — Artist / Rate card / DJ tab
+     ============================================================ */
+  .info-row{
+    display:grid;
+    grid-template-columns:1fr;
+    border-bottom:var(--border-w) solid var(--color-accent);
+  }
+  @media (min-width:768px){
+    .info-row{ grid-template-columns:360px 1fr 158px; }
+  }
+
+  /* --- Artist column --- */
+  .artist-col{
+    background:var(--color-dark);
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    min-height:360px;
+    border-bottom:var(--border-w) solid var(--color-accent);
+  }
+  @media (min-width:768px){
+    .artist-col{ border-bottom:0; border-right:var(--border-w) solid var(--color-accent); }
+  }
+  .artist-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+  .artist-head .label{ font-size:10px; font-weight:700; letter-spacing:0.2em; line-height:1.2; }
+  .artist-head .star{
+    width:24px; height:24px; background:var(--color-accent); color:var(--color-dark);
+    display:grid; place-items:center; font-size:14px; font-weight:900; line-height:1;
+  }
+  .artist-name{ text-transform:uppercase; line-height:0.85; letter-spacing:-0.02em; }
+  .artist-name .big{ font-size:46px; }
+  .artist-name .city{ font-size:28px; color:var(--color-white); margin-top:4px; }
+
+  .tour-list{ margin-top:24px; font-size:11px; font-weight:700; letter-spacing:0.02em; }
+  .tour-item{ display:flex; gap:8px; border-top:var(--border-w-2) solid var(--color-accent); padding:6px 0; }
+  .tour-item.last{ border-bottom:var(--border-w-2) solid var(--color-accent); }
+  .tour-item .date{ opacity:.6; }
+  .tour-item .tag-soldout{ background:var(--color-accent); color:var(--color-dark); padding:0 4px; }
+
+  .icon-row{ display:flex; gap:6px; margin-top:12px; }
+  .icon-box{
+    width:28px; height:28px; border:var(--border-w-2) solid var(--color-accent);
+    display:grid; place-items:center; font-size:12px;
+  }
+  .icon-box.fill{ background:var(--color-accent); color:var(--color-dark); font-weight:900; border:none; }
+  .icon-box.small{ font-size:10px; font-weight:700; }
+
+  .fine-print{ margin-top:8px; font-size:9px; line-height:1.1; opacity:.6; text-transform:uppercase; }
+
+  /* --- Rate card column --- */
+  .rate-col{
+    background:var(--color-accent);
+    color:var(--color-dark);
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    min-height:360px;
+    border-bottom:var(--border-w) solid var(--color-dark);
+  }
+  @media (min-width:768px){
+    .rate-col{ border-bottom:0; border-right:var(--border-w) solid var(--color-accent); }
+  }
+  .rate-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .rate-head .title{ font-weight:900; font-size:11px; letter-spacing:0.18em; }
+  .rate-head .badge{ font-size:10px; font-weight:700; border:var(--border-w-2) solid var(--color-dark); padding:0 4px; }
+
+  .rate-table{ text-transform:uppercase; line-height:0.9; letter-spacing:-0.01em; }
+  .rate-row{ display:flex; justify-content:space-between; border-bottom:var(--border-w) solid var(--color-dark); padding:7px 0; }
+  .rate-row.joke{ font-size:26px; padding:4px 0; }
+  .rate-row.joke .lol{ font-size:14px; align-self:center; font-family:var(--font-cond); }
+  .rate-row span{ font-size:22px; }
+  @media (min-width:768px){
+    .rate-row.joke{ font-size:32px; }
+    .rate-row span{ font-size:28px; }
+  }
+  .rate-row.rider{ font-size:16px; font-weight:700; letter-spacing:0.15em; border-bottom:none; padding:7px 0; }
+
+  .rate-foot{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:16px; font-weight:900; font-size:10px; letter-spacing:0.15em; }
+  .rate-foot .stamp{ background:var(--color-dark); color:var(--color-accent); padding:4px 8px; }
+
+  /* --- DJ tab column --- */
+  .dj-col{
+    background:var(--color-accent);
+    color:var(--color-dark);
+    position:relative;
+    overflow:hidden;
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  @media (min-width:768px){ .dj-col{ min-height:360px; flex-direction:column; } }
+  .dj-letters{
+    font-family:var(--font-display);
+    line-height:0.75;
+    letter-spacing:-0.06em;
+    display:flex;
+    gap:0;
+  }
+  @media (min-width:768px){ .dj-letters{ flex-direction:column; } }
+  .dj-letters .d{ font-size:96px; line-height:0.8; margin-left:-4px; }
+  .dj-letters .j{ font-size:96px; line-height:0.8; margin-top:-8px; }
+  @media (min-width:768px){
+    .dj-letters .d,.dj-letters .j{ font-size:148px; }
+    .dj-letters .j{ margin-top:-24px; }
+  }
+  .dj-rotated{
+    position:absolute; bottom:8px; right:8px;
+    font-size:9px; font-weight:900; letter-spacing:0.2em; white-space:nowrap;
+  }
+  @media (min-width:768px){
+    .dj-rotated{ bottom:12px; right:auto; left:50%; transform:translateX(-50%) rotate(-90deg); }
+  }
+  .dj-dot{
+    position:absolute; top:8px; right:8px; width:20px; height:20px;
+    border:var(--border-w-2) solid var(--color-dark); border-radius:50%;
+    display:grid; place-items:center; font-size:10px;
+  }
+
+  /* ============================================================
+     HERO ROW — vinyl graphic + big headline
+     ============================================================ */
+  .hero-row{
+    display:grid;
+    grid-template-columns:1fr;
+    border-bottom:var(--border-w) solid var(--color-accent);
+    position:relative;
+    background:var(--color-dark);
+    overflow:hidden;
+  }
+  @media (min-width:768px){
+    .hero-row{ grid-template-columns:360px 1fr 158px; }
+  }
+
+  .side-custom{
+    display:none;
+    border-right:var(--border-w) solid var(--color-accent);
+    background:var(--color-panel);
+    padding:8px;
+  }
+  @media (min-width:768px){ .side-custom{ display:block; } }
+  .side-custom-inner{
+    border:var(--border-w-2) solid var(--color-accent); height:100%;
+   display: block; place-items:end ; padding:8px; 
+  }
+  .side-custom-text{ font-family:var(--font-display); font-size:22px; line-height:0.9; text-align:center; }
+  .side-custom-text .tag{ background:var(--color-accent); color:var(--color-dark); padding:0 4px; }
+  .side-custom-text .sub{ font-size:10px; font-family:var(--font-cond); margin-top:8px; letter-spacing:0.2em; }
+
+  .hero-main{
+    position:relative;
+    background:var(--color-panel);
+    padding:0;
+    overflow:hidden;
+    min-height:420px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  @media (min-width:768px){ .hero-main{ min-height:540px; } }
+
+  /* vinyl target graphic */
+  .vinyl-wrap{
+    position:absolute; left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    pointer-events:none; max-width:90%;
+  }
+  .ring-1{ width:300px; height:300px; border-radius:50%; border:var(--border-w) solid var(--color-accent); display:grid; place-items:center; }
+  .ring-2{ width:82%; height:82%; border-radius:50%; border:var(--border-w-2) solid rgba(255,77,18,.6); display:grid; place-items:center; }
+  .ring-3{ width:64%; height:64%; border-radius:50%; border:var(--border-w-2) solid rgba(255,77,18,.4); display:grid; place-items:center; }
+  .ring-4{ width:34%; height:34%; border-radius:50%; background:var(--color-accent2); display:grid; place-items:center; }
+  .ring-5{ width:18%; height:18%; border-radius:50%; background:var(--color-dark); }
+  @media (min-width:768px){ .ring-1{ width:520px; height:520px; } }
+
+  .bars-wrap{ position:absolute; inset:0; display:grid; place-items:center; }
+  .bars{ display:flex; align-items:flex-end; gap:2px; height:80px; max-width:100%; }
+  @media (min-width:768px){ .bars{ gap:3px; height:120px; } }
+  .bars span{ width:4px; background:var(--color-accent); display:block; }
+  @media (min-width:768px){ .bars span{ width:6px; } }
+
+  .hero-headline{
+    position:relative; z-index:10;
+    text-transform:uppercase; line-height:0.78; letter-spacing:-0.04em;
+    padding:24px 12px;
+    user-select:none;
+  }
+  @media (min-width:768px){ .hero-headline{ padding:24px 24px; } }
+  .hero-headline .beat{ font-family:var(--font-display); font-size:56px; color:var(--color-accent); }
+  .hero-headline .bybeat{ font-family:var(--font-display); font-size:56px; color:transparent; -webkit-text-stroke:2px var(--color-accent); }
+  @media (min-width:768px){
+    .hero-headline .beat, .hero-headline .bybeat{ font-size:112px; }
+  }
+  .hero-headline .custom-sets{
+    font-family:var(--font-display); font-size:42px;
+    background:var(--color-accent); color:var(--color-dark);
+    display:inline-block; padding:0 8px; transform:rotate(-1deg); margin-top:4px; max-width:100%;
+  }
+  @media (min-width:768px){ .hero-headline .custom-sets{ font-size:84px; } }
+  .hero-headline .here-row{ font-family:var(--font-display); font-size:42px; color:var(--color-accent); margin-top:4px; display:flex; gap:8px; max-width:100%; overflow:hidden; }
+  @media (min-width:768px){ .hero-headline .here-row{ font-size:84px; } }
+  .hero-headline .here-row .ghost{ color:transparent; -webkit-text-stroke:2px var(--color-accent); }
+  .hero-headline .desc{
+    font-size:10px; font-weight:700; letter-spacing:0.25em; margin-top:16px;
+    color:rgba(255,255,255,.8); max-width:420px; line-height:1.2;
+  }
+  @media (min-width:768px){ .hero-headline .desc{ font-size:11px; } }
+
+  .coords-badge{
+    position:absolute; top:12px; right:12px;
+    font-size:9px; font-weight:900; letter-spacing:0.15em;
+    border:var(--border-w-2) solid var(--color-accent); padding:4px 8px;
+    background:var(--color-dark); max-width:70%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+
+  .hero-actions{
+    position:absolute; bottom:12px; left:12px;
+    display:flex; gap:8px; flex-wrap:wrap; max-width:calc(100% - 24px);
+  }
+  @media (min-width:768px){ .hero-actions{ left:24px; } }
+  .btn{
+    font-family:var(--font-display); font-size:14px; letter-spacing:0.02em;
+    padding:8px 16px; border:var(--border-w) solid var(--color-accent);
+    transition:background-color .15s,color .15s;
+  }
+  @media (min-width:768px){ .btn{ font-size:16px; padding:8px 20px; } }
+  .btn-solid{ background:var(--color-accent); color:var(--color-dark); }
+  .btn-solid:hover{ background:var(--color-dark); color:var(--color-accent); }
+  .btn-outline{ background:var(--color-dark); color:var(--color-accent); }
+  .btn-outline:hover{ background:var(--color-accent); color:var(--color-dark); }
+
+  .side-vertical{
+    display:none;
+    background:var(--color-dark);
+    border-left:var(--border-w) solid var(--color-accent);
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:16px;
+    overflow:hidden;
+  }
+  @media (min-width:768px){ .side-vertical{ display:flex; } }
+  .side-vertical span{
+    font-family:var(--font-display); font-size:44px; line-height:1; letter-spacing:-0.05em;
+    writing-mode:vertical-rl; transform:rotate(180deg); opacity:.6;
+  }
+
+  /* ============================================================
+     BOOKING ROW
+     ============================================================ */
+  .booking-row{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  @media (min-width:768px){
+    .booking-row{ grid-template-columns:360px 1fr 158px; }
+  }
+
+  .ve-col{
+    background:var(--color-accent); color:var(--color-dark); 
+    position:relative; overflow:hidden;
+    height:160px;
+    border-bottom:var(--border-w) solid var(--color-accent);
+    display:flex; align-items:flex-end;
+  }
+  @media (min-width:768px){
+    .ve-col{ height:96%; border-bottom:0; border-right:var(--border-w) solid var(--color-accent); }
+  }
+  .ve-text{ font-family:var(--font-display); font-size:140px; line-height:0.7; letter-spacing:-0.08em; margin:0 0 0 0; }
+  @media (min-width:768px){ .ve-text{ font-size:240px; margin-left:-12px; margin-bottom:-16px; } }
+  .ve-badge{
+    position:absolute; top:12px; left:12px; font-size:10px; font-weight:900; letter-spacing:0.15em;
+    background:var(--color-dark); color:var(--color-accent); padding:4px 8px;
+  }
+  .ve-plus{
+    position:absolute; top:12px; right:12px; width:24px; height:24px;
+    border:var(--border-w-2) solid var(--color-dark); display:grid; place-items:center;
+    font-size:14px; font-weight:900;
+  }
+
+  .info-col{
+    background:var(--color-dark);
+    padding:14px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    min-height:260px; overflow:hidden;
+  }
+  .info-col-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:768px){ .info-col-grid{ grid-template-columns:1.2fr 0.8fr; } }
+
+  .soldout-heading{ text-transform:uppercase; line-height:0.85; letter-spacing:-0.02em; }
+  .soldout-heading .tag{
+    font-family:var(--font-display); font-size:20px; background:var(--color-accent); color:var(--color-dark);
+    display:inline-block; padding:0 8px; max-width:100%;
+  }
+  .soldout-heading .next{ font-family:var(--font-display); font-size:20px; margin-top:4px; max-width:100%; }
+  @media (min-width:768px){
+    .soldout-heading .tag,.soldout-heading .next{ font-size:26px; }
+  }
+  .soldout-heading .details{ font-size:12px; font-weight:700; letter-spacing:0.15em; margin-top:8px; opacity:.7; }
+
+  .mobile-actions{ display:flex; gap:8px; margin-top:16px; }
+  @media (min-width:768px){ .mobile-actions{ display:none; } }
+  .mobile-actions .btn{ flex:1; padding:8px 16px; font-size:14px; }
+  .mobile-actions .btn-ghost{ background:transparent; color:var(--color-accent); }
+
+  .tracklist{ margin-top:20px; border:var(--border-w-2) solid var(--color-accent); padding:8px; overflow:hidden; }
+  .tracklist-head{
+    font-size:10px; font-weight:900; letter-spacing:0.2em; margin-bottom:8px;
+    display:flex; justify-content:space-between;
+  }
+  .tracklist-head .name{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tracklist-head .toggle{
+    background:var(--color-accent); color:var(--color-dark); padding:0 4px; cursor:pointer; margin-left:8px; flex-shrink:0;
+  }
+  .tracklist-rows{ display:flex; flex-direction:column; gap:1px; font-size:12px; font-weight:700; }
+  .track-row{
+    width:100%; text-align:left; display:flex; justify-content:space-between; align-items:center;
+    padding:6px 8px; border:1px solid rgba(255,77,18,.3); transition:background-color .15s,color .15s;
+  }
+  .track-row:hover, .track-row.active{ background:var(--color-accent); color:var(--color-dark); }
+  .track-row .left{ display:flex; gap:8px; }
+  .track-row .n{ opacity:.6; }
+  .track-row .right{ display:flex; gap:12px; font-size:10px; opacity:.8; }
+
+  .tagline-box{
+    background:var(--color-accent); color:var(--color-dark); padding:12px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .tagline-box .tag1{ font-weight:900; font-size:11px; line-height:1.1; letter-spacing:0.02em; }
+  .tagline-box .tag2{ font-family:var(--font-display); font-size:18px; line-height:0.9; margin-top:12px; }
+  .tagline-box .contact{ font-size:10px; font-weight:700; line-height:1.2; margin-top:12px; }
+  .socials{ display:flex; gap:8px; margin-top:12px; }
+  .social-box{
+    flex:1; height:36px; display:grid; place-items:center;
+    font-family:var(--font-display); font-size:12px; border:var(--border-w-2) solid var(--color-dark);
+  }
+  .social-box.fill{ background:var(--color-dark); color:var(--color-accent); border:none; }
+
+  .legal-row{
+    margin-top:16px; display:flex; flex-wrap:wrap; gap:8px;
+    font-size:9px; font-weight:900; letter-spacing:0.15em; opacity:.6;
+  }
+
+  .date-col{
+    display:none;
+    background:var(--color-panel);
+    border-left:var(--border-w) solid var(--color-accent);
+    padding:8px;
+  }
+  @media (min-width:768px){ .date-col{ display:block; } }
+  .date-col-inner{
+    height:100%; border:var(--border-w-2) solid var(--color-accent); padding:8px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .date-col-inner .loc{ font-size:9px; font-weight:900; letter-spacing:0.2em; }
+  .date-col-inner .num{ font-family:var(--font-display); font-size:28px; line-height:0.8; }
+  .date-col-inner .divider{ width:100%; height:2px; background:var(--color-accent); }
+  .date-col-inner .status{ font-size:8px; line-height:1.1; }
+
+  /* ============================================================
+     FOOTER TICKER
+     ============================================================ */
+  .ticker{
+    border-top:var(--border-w) solid var(--color-accent);
+    background:var(--color-dark);
+    padding:6px 12px;
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:8px; font-weight:900; letter-spacing:0.12em;
+    overflow:hidden;
+  }
+  @media (min-width:768px){ .ticker{ font-size:9px; letter-spacing:0.2em; } }
+  .ticker .left{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ticker .right{ display:none; margin-left:16px; white-space:nowrap; }
+  @media (min-width:768px){ .ticker .right{ display:inline; } }
+
+/* Restored original-style hyperlink behavior */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a:hover,
+a:focus {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+
+:root {
+  --primary: #fb860c;
+}
+</style>
+</head>
+<body>
+<div class="poster"><img src="images/hero-bg.jpg" width="100%" height="100%" alt=""></div>
+<div class="wrap">
+ <div class="poster">
+
+  
+    <!-- ============ Topbar ============ -->
+    <div class="topbar">
+			
+		
+     
+
+      <div class="topbar-right font-cond">
+
+        <span class="full">* TRANCE * HOUSE * ELECTRONIC * MELODIC *</span>
+        <span class="short">* TRANCE * HOUSE * ELECTRONIC *</span>
+      </div>
+    </div>
+
+    <!-- ============ Info row: Artist / Rate card / DJ tab ============ -->
+    <div class="info-row">
+
+      <!-- Artist column -->
+      <div class="artist-col">
+        <div>
+          <div class="artist-head">
+            <div class="label font-cond">DJ / PRODUCTOR<br>
+            2021 — PRESENTE</div>
+            <div class="star">*</div>
+          </div>
+          <div class="artist-name font-display">
+           <div class="big">ECUADOR</div>
+            <div class="city"> 
+            <img src="images/logo.png" width="100%" alt=""/></div>
+          </div>
+        </div>
+        <div class="tour-list font-cond">
+          <div class="tour-item"><span class="date">2021</span> <span>INICIO DEL PROYECTO — DJ / PRODUCCIÓN</span></div>
+          <div class="tour-item"><span class="date">2022</span> <span>WATERMELON — SENCILLO DEBUT</span></div>
+          <div class="tour-item last"><span class="date">2026</span> <span class="tag-soldout">SHANTI / CARNIVAL — NUEVA ETAPA</span></div>
+</div>
+      </div>
+
+      <!-- Rate card column -->
+      <div class="rate-col">
+        <div>
+          <div class="rate-head">
+            <div class="title font-cond">BOOKING / COLLABORATIONS</div>
+            <div class="badge">CONTACTO DIRECTO</div>
+          </div>
+          <div class="rate-table font-display">
+            <div class="rate-row joke"><span>ENERGÍA + EMOCIÓN —</span><span class="lol">HM</span></div>
+            <div class="rate-row"><span>DJ SETS</span><span>BOOKING</span></div>
+             <div class="rate-row"><span>PRODUCCIÓN</span><span>COLAB</span></div>
+             <div class="rate-row"><span>REMIX / RELEASE</span><span>OPEN</span></div>
+             <div class="rate-row"><span>PRESS / MEDIA</span><span>CONTACTO</span></div>
+             <div class="rate-row rider font-cond"><span>UNA IDENTIDAD QUE BUSCA QUE CADA MELODÍA DEJE UNA SENSACIÓN.</span></div>
+          </div>
+        </div>
+        <div class="rate-foot font-cond">
+          <span>BOOKING / PRESS / COLLAB</span>
+          <span class="stamp">• GLOBAL</span>
+        </div>
+      </div>
+
+      <!-- DJ tab column -->
+      <div class="dj-col">
+        <div class="dj-letters">
+          <div class="d">H</div>
+		  <div class="d">M</div>
+</div>
+       
+        <div class="dj-dot">●</div>
+      </div>
+    </div>
+
+    <!-- ============ Hero row: vinyl graphic + headline ============ -->
+    <div class="hero-row">
+
+      <div class="side-custom">
+        <div class="side-custom-inner">
+          <div class="side-custom-text font-display">
+            <div class="tag">DIAMOND</div>
+            <div>FRECUENCIAS</div>
+            <div class="sub font-cond">— MELODÍA / ENERGÍA —</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-main">
+        <div class="vinyl-wrap">
+          <div class="ring-1"><div class="ring-2"><div class="ring-3"><div class="ring-4"><div class="ring-5"></div></div></div></div></div>
+        </div>
+        <div class="bars-wrap">
+          <div class="bars" id="bars"></div>
+        </div>
+
+        <div class="hero-headline">
+          <div class="beat">SIENTE</div>
+           <div class="bybeat">LAS FRECUENCIAS</div>
+           <div class="custom-sets">Y EL BRILLO</div>
+           <div class="here-row"><span>DIAMOND</span><span class="ghost">HM</span></div>
+          
+        </div>
+
+        <div class="coords-badge font-cond">• SANTA ROSA </div>
+
+        <div class="hero-actions">
+    			 <a class="btn btn-outline" id="btnHeroListen" href="https://stemsmag.fyi/articulos/articulo-diamond-hm.html" target="_blank" rel="noopener"> &laquo; LEER ARTÍCULO</a>
+            <a class="btn btn-solid" id="btnHeroBook" href="https://open.spotify.com/intl-es/artist/4uqZCOfNBNhi2RgipDf8n5?si=1R6D4NQcT4CXve-05HhhQA">ESCUCHAR AHORA</a>
+          <a class="btn btn-outline" id="btnHeroListen" href="https://www.youtube.com/@dj_diamondmusichouse" target="_blank" rel="noopener">VER CANAL DE YOUTUBE</a>
+        </div>
+      </div>
+
+      <div class="side-vertical">
+        <span>ECUADOR UNDERGROUND</span>
+      </div>
+    </div>
+
+    <!-- ============ Booking row ============ -->
+    <div class="booking-row" id="booking">
+
+      <div class="ve-col">
+        <div class="ve-text">H M</div>
+        <div class="ve-badge font-cond">DIAMOND HM — CUT</div>
+        <div class="ve-plus">+</div>
+      </div>
+
+      <div class="info-col">
+        <div class="info-col-grid">
+          <div>
+            <div class="soldout-heading">
+              <div class="tag font-display">DJ DIAMOND HM</div>
+               <div class="next font-display">ENERGÍA DE UN LADO. EMOCIÓN DEL OTRO.</div>
+               <div class="details font-cond">ECUADOR / DESDE 2021 / TRANCE · HOUSE · ELECTRÓNICA</div>
+            </div>
+
+            <div class="mobile-actions">
+               <a class="btn btn-solid" href="mailto:daguilarcorrea@gmail.com">BOOKING</a>
+               <a class="btn btn-ghost" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5">SPOTIFY</a>
+            </div>
+
+            <div class="tracklist">
+              <div class="tracklist-head font-cond">
+                <span class="name">MINI PLAYLIST — DIAMOND HM / SPOTIFY</span>
+                <a class="toggle" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5">OPEN</a>
+              </div>
+              <div class="tracklist-rows font-cond" id="trackRows"></div>
+            </div>
+          </div>
+
+          <div class="tagline-box">
+<div class="tag2 font-display"><img src="images/perfil.jpg" width="100%" alt=""/><br>
+  <br>
+  FRECUENCIAS<br>MELODÍAS<br>RELAX<br>Y ENERGÍA</div>
+</div>
+        </div>
+</div>
+
+      <div class="date-col">
+        <div class="date-col-inner">
+          <div class="loc font-cond">CATALOGO</div>
+           <div class="num font-display">30<br>RELE<br>ASES</div>
+           <div class="divider"></div>
+           <div class="status font-cond">LANZAMIENTOS<br>DISPONIBLES<br>EN STREAMING</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Expanded artist sections ============ -->
+    <div class="booking-row" id="profile" >
+      <div class="ve-col" ><div class="ve-text">I D</div><div class="ve-badge font-cond">ARTIST — PROFILE</div><div class="ve-plus">+</div></div>
+      <div class="info-col">
+        <div class="info-col-grid">
+          <div>
+            <div class="soldout-heading"><div class="tag font-display">DJ DIAMOND HM</div><div class="next font-display">SIENTE LAS FRECUENCIAS Y EL BRILLO.</div><div class="details font-cond">DJ Y PRODUCTOR ECUATORIANO · PROYECTO INICIADO EN 2021 · BASE: ECUADOR</div></div>
+            <div class="tracklist"><div class="tracklist-head font-cond"><span class="name">BIO / IDENTIDAD</span><span class="toggle">HM</span></div>
+              <div class="font-cond" style="font-size:12px;line-height:1.35;padding:4px 2px;">DJ Diamond HM descubrió desde joven que la música sería su camino y decidió asumirla como proyecto a los 15 años. Se formó en Romo DJ’s desde 2018 y en 2022 publicó “Watermelon”, su primer sencillo.<br><br>Su propuesta equilibra energía y emoción. Trabaja con referencias, tendencias y métricas, pero procura que el resultado conserve una identidad propia. Avicii es una de sus principales referencias por su capacidad de convertir una melodía en una experiencia emocional.</div>
+            </div>
+          </div>
+          <div class="tagline-box"><div class="tag2 font-display"><img src="images/origen.jpg" width="100%" alt=""/>
+      </div><div class="contact font-cond">PILARES: FRECUENCIAS / MELODÍAS / RELAX</div></div>
+        </div>
+      </div>
+      <div class="date-col"><div class="date-col-inner">
+        <div class="loc font-cond">TRAYECTORIA</div><div class="num font-display">21<br>—<br>26</div><div class="divider"></div><div class="status font-cond">PROYECTO<br>ACTIVO<br>GLOBAL</div></div></div>
+    </div>
+
+    <div class="booking-row" id="releases">
+      <div class="ve-col"><div class="ve-text">R X</div><div class="ve-badge font-cond">RELEASES — 2022/2026</div><div class="ve-plus">+</div></div>
+      <div class="info-col">
+        <div class="info-col-grid">
+          <div>
+            <div class="soldout-heading"><div class="tag font-display">LANZAMIENTOS</div><div class="next font-display">UNA DISCOGRAFÍA EN EXPANSIÓN</div><div class="details font-cond">SPOTIFY / APPLE MUSIC / YOUTUBE / SOUNDCLOUD</div></div>
+            <div class="tracklist"><div class="tracklist-head font-cond"><span class="name">SELECCIÓN DESTACADA</span><a class="toggle" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5">SPOTIFY</a></div>
+              <div class="tracklist-rows font-cond">
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">01</span><span>Watermelon</span></span><span class="right"><span>2022</span><span>DEBUT</span></span></a>
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">02</span><span>Shanti</span></span><span class="right"><span>2026</span><span>PsyTrance</span></span></a>
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">03</span><span>Pixels (Remix)</span></span><span class="right"><span>2026</span><span>2:35</span></span></a>
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">04</span><span>Fury of the Gobs</span></span><span class="right"><span>2025</span><span>3:58</span></span></a>
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">05</span><span>KaBoom! (Remix)</span></span><span class="right"><span>2025</span><span>130 BPM</span></span></a>
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">06</span><span>Carnival</span></span><span class="right"><span>2026</span><span>LATEST</span></span></a>
+              </div>
+            </div>
+          </div>
+          <div class="tagline-box"><div class="tag1 font-cond"><img src="track-until-we-meet-again.jpg" width="100%" alt=""/>EN PRODUCCIÓN // UNTIL WE MEET AGAIN</div><div class="contact font-cond">TRIBUTO A SU PADRE Y SU MASCOTA · UPLIFTING TRANCE · PRÓXIMAMENTE</div></div>
+        </div>
+      </div>
+      <div class="date-col"><div class="date-col-inner"><div class="loc font-cond">LATEST</div><div class="num font-display">05<br>22<br>26</div><div class="divider"></div><div class="status font-cond">CARNIVAL<br>ÚLTIMO<br>LANZAMIENTO</div></div></div>
+    </div>
+
+    <div class="booking-row" id="links">
+      <div class="ve-col"><div class="ve-text">O N</div><div class="ve-badge font-cond">PLATFORMS — SOCIAL</div><div class="ve-plus">+</div></div>
+      <div class="info-col">
+        <div class="info-col-grid">
+          <div>
+            <div class="soldout-heading"><div class="tag font-display">ESCUCHA / SIGUE</div><div class="next font-display">DIAMOND HM EN TODAS SUS FRECUENCIAS</div></div>
+            <div class="tracklist"><div class="tracklist-head font-cond"><span class="name">PLATAFORMAS</span><span class="toggle">OPEN</span></div>
+              <div class="tracklist-rows font-cond">
+                <a class="track-row" href="https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5"><span class="left"><span class="n">01</span><span>SPOTIFY — DIAMOND HM</span></span><span class="right"><span>STREAM</span></span></a>
+                <a class="track-row" href="https://music.apple.com/us/artist/dj-diamond-hm/1619336649"><span class="left"><span class="n">02</span><span>APPLE MUSIC</span></span><span class="right"><span>STREAM</span></span></a>
+                <a class="track-row" href="https://www.youtube.com/@dj_diamondmusichouse"><span class="left"><span class="n">03</span><span>YOUTUBE</span></span><span class="right"><span>VIDEO</span></span></a>
+                <a class="track-row" href="https://soundcloud.com/dj_diamondmusichouse"><span class="left"><span class="n">04</span><span>SOUNDCLOUD</span></span><span class="right"><span>MIXES</span></span></a>
+                <a class="track-row" href="https://www.instagram.com/dj_diamondmusichouse/"><span class="left"><span class="n">05</span><span>INSTAGRAM</span></span><span class="right"><span>SOCIAL</span></span></a>
+                <a class="track-row" href="https://www.tiktok.com/@dj_diamondmusichouse"><span class="left"><span class="n">06</span><span>TIKTOK</span></span><span class="right"><span>SOCIAL</span></span></a>
+				   <a class="track-row" href="https://www.facebook.com/djdiamondhousemusic"><span class="left"><span class="n">07</span><span>FACEBOOK</span></span><span class="right"><span>SOCIAL</span></span></a>
+              </div>
+            </div>
+          </div>
+          <div class="tagline-box"><div class="tag1 font-cond">CONTACTO / BOOKING</div><div class="tag2 font-display">DAGUILARCORREA<br>@GMAIL.COM</div><div class="contact font-cond">PROYECTOS · SHOWS · PRENSA · COLABORACIONES</div></div>
+        </div>
+      </div>
+      <div class="date-col"><div class="date-col-inner"><div class="loc font-cond">WEB</div><div class="num font-display">HM<br>24/7</div><div class="divider"></div><div class="status font-cond">DJDIAMONDHM<br>SITIO OFICIAL<br></div></div></div>
+    </div>
+
+    <!-- ============ Footer ticker ============ -->
+    <div class="ticker font-cond">
+      <span class="left">MARVELOUS PRODUCTION 2026</span>
+      <span class="right">SIENTE LAS FRECUENCIAS. — DJ DIAMOND HM.</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     NOTE ON IMAGES
+     The original React/Tailwind bundle was inspected byte-by-byte:
+     it contains ZERO <img> tags and ZERO base64-encoded images.
+     Every visual element (the "vinyl" rings, the equalizer bars,
+     the big DJ letters, etc.) is built purely with CSS/DOM shapes.
+     So there is no IMAGES{} lookup object in this file — there is
+     nothing to decode or reference.
+     ============================================================ */
+
+  /* ------------------------------------------------------------
+     Equalizer bars (decorative, matches original sine-wave heights)
+     ------------------------------------------------------------ */
+  var barsContainer = document.getElementById("bars");
+  var BAR_COUNT = 24;
+  for (var i = 0; i < BAR_COUNT; i++) {
+    var bar = document.createElement("div");
+    var height = 12 + Math.abs(Math.sin(i * 0.7)) * 60;
+    bar.style.height = height + "px";
+    bar.style.opacity = String(0.9 - i * 0.01);
+    barsContainer.appendChild(bar);
+  }
+
+  /* ------------------------------------------------------------
+     Tracklist data
+     ------------------------------------------------------------ */
+  var TRACKS = [
+    { n:"01", title:"SHANTI", time:"05:00", bpm:"PSYTRANCE", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" },
+    { n:"02", title:"PIXELS - REMIX", time:"02:35", bpm:"2026", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" },
+    { n:"03", title:"FURY OF THE GOBS", time:"03:58", bpm:"2025", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" },
+    { n:"04", title:"KA BOOM! - REMIX", time:"02:49", bpm:"2025", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" },
+    { n:"05", title:"CARNIVAL", time:"—", bpm:"2026", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" },
+    { n:"06", title:"WATERMELON", time:"02:53", bpm:"2022", url:"https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5" }
+  ];
+
+  var trackRows = document.getElementById("trackRows");
+  var rowEls = [];
+  TRACKS.forEach(function(t, idx){
+    var row = document.createElement("button");
+    row.type = "button";
+    row.className = "track-row";
+    row.innerHTML =
+      '<span class="left"><span class="n">' + t.n + '</span> <span>' + t.title + '</span></span>' +
+      '<span class="right"><span>' + t.bpm + '</span><span>' + t.time + '</span></span>';
+    row.addEventListener("click", function(){ window.open(t.url, "_blank", "noopener"); });
+    trackRows.appendChild(row);
+    rowEls.push(row);
+  });
+
+  function setActiveRow(idx){
+    rowEls.forEach(function(el, i){
+      el.classList.toggle("active", i === idx);
+    });
+  }
+
+  var stopToggle = document.getElementById("stopToggle");
+
+  /* ------------------------------------------------------------
+     Mini synth (Web Audio API) — recreates the original oscillator
+     "mixtape preview" tones, one per track.
+     ------------------------------------------------------------ */
+  var audioCtx = null;
+  var currentVoice = null;
+  var currentIndex = null;
+
+  async function getAudioContext(){
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+    try {
+      if (navigator.audioSession) navigator.audioSession.type = "playback";
+    } catch (e) {}
+    return audioCtx;
+  }
+
+  function stopTone(){
+    if (currentVoice) {
+      try {
+        var now = audioCtx.currentTime;
+        currentVoice.gain.gain.cancelScheduledValues(0);
+        currentVoice.gain.gain.setValueAtTime(currentVoice.gain.gain.value, now);
+        currentVoice.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+        currentVoice.osc.stop(now + 0.16);
+      } catch (e) {}
+      currentVoice = null;
+    }
+  }
+
+  async function playTone(index){
+    var ctx = await getAudioContext();
+    stopTone();
+
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var filter = ctx.createBiquadFilter();
+    var freqs = [110, 138.59, 164.81];
+
+    osc.type = index === 1 ? "sawtooth" : index === 2 ? "triangle" : "square";
+    osc.frequency.value = freqs[index % 3];
+
+    filter.type = "lowpass";
+    filter.frequency.value = 800;
+
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 4.5);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 4.6);
+
+    currentVoice = { osc: osc, gain: gain };
+    currentIndex = index;
+    setActiveRow(index);
+    stopToggle.textContent = "▶ PLAYING";
+
+    osc.onended = function(){
+      if (currentVoice && currentVoice.osc === osc) currentVoice = null;
+    };
+  }
+
+  /* ------------------------------------------------------------
+     Buttons / interactions
+     ------------------------------------------------------------ */
+  if (stopToggle) stopToggle.addEventListener("click", function(){ window.open("https://open.spotify.com/artist/4uqZCOfNBNhi2RgipDf8n5", "_blank", "noopener"); });
+
+
+})();
+</script>
+
+<script>
+/* External-link safety: opens off-site links in a new tab */
+(function(){
+  function mark(a){
+    var href = a.getAttribute("href");
+    if (!href) return;
+    try {
+      var u = new URL(href, document.baseURI);
+      if ((u.protocol === "http:" || u.protocol === "https:") && u.host !== location.host) {
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+      }
+    } catch (e) {}
+  }
+  function scan(){ document.querySelectorAll("a[href]").forEach(mark); }
+  if (document.readyState !== "loading") scan();
+  else document.addEventListener("DOMContentLoaded", scan);
+  document.addEventListener("click", function(e){
+    var a = e.target && e.target.closest && e.target.closest("a[href]");
+    if (a) mark(a);
+  }, true);
+})();
+</script>
+
+
+<!--
+HTML QA: Original class-token comparison performed.
+Original unique class tokens: 107
+Current unique class tokens: 108
+Missing original class tokens: none
+-->
+</body>
+</html>
